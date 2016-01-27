@@ -118,9 +118,7 @@ public class CityConnect {
   if (userCommand.trim().equals(""))
    return String.format(MESSAGE_INVALID_FORMAT, userCommand);
 
-  String commandTypeString = getFirstWord(userCommand);
-
-  COMMAND_TYPE commandType = determineCommandType(commandTypeString);
+  COMMAND_TYPE commandType = determineCommandType(getFirstWord(userCommand));
 
   switch (commandType) {
   case ADD_ROUTE:
