@@ -98,7 +98,7 @@ public class CityConnect {
   * ====================================================================
   */
  public static void main(String[] args) {
-  System.out.print(WELCOME_MESSAGE);
+  System.out.println(WELCOME_MESSAGE);
   while (true) {
    System.out.print("Enter command:");
    String feedback = executeCommand(scanner.nextLine());
@@ -248,7 +248,7 @@ public class CityConnect {
   String newEndLocation = parameters[PARAM_POSITION_END_LOCATION];
   String distance = parameters[PARAM_POSITION_DISTANCE];
 
-  if (!isPositiveNonZeroInt(distance)){
+  if (!positiveInt(distance)){
    return String.format(MESSAGE_INVALID_FORMAT, userCommand);
   }
 
@@ -312,7 +312,7 @@ public class CityConnect {
       .equalsIgnoreCase(startLocation2));
  }
 
- private static boolean isPositiveNonZeroInt(String s) {
+ private static boolean positiveInt(String s) {
   try {
    int i = Integer.parseInt(s);
    //return true if i is greater than 0
