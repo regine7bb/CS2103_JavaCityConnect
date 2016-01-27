@@ -98,13 +98,11 @@ public class CityConnect {
   * ====================================================================
   */
  public static void main(String[] args) {
-  showToUser(WELCOME_MESSAGE);
+  System.out.println(WELCOME_MESSAGE);
   while (true) {
    System.out.print("Enter command:");
-   String command = scanner.nextLine();
-   String userCommand = command;
-   String feedback = executeCommand(userCommand);
-   showToUser(feedback);
+   String feedback = executeCommand(scanner.nextLine());
+   System.out.println(feedback);
   }
  }
 
@@ -116,30 +114,31 @@ public class CityConnect {
   * ====================================================================
   */
 
- private static void showToUser(String text) {
-  System.out.println(text);
- }
-
  public static String executeCommand(String userCommand) {
   if (userCommand.trim().equals(""))
    return String.format(MESSAGE_INVALID_FORMAT, userCommand);
 
-  String commandTypeString = getFirstWord(userCommand);
-
-  COMMAND_TYPE commandType = determineCommandType(commandTypeString);
-
-  switch (commandType) {
-  case ADD_ROUTE:
-   return addRoute(userCommand);
-  case GET_DISTANCE:
-   return getDistance(userCommand);
-  case INVALID:
+  COMMAND_TYPE commandType = determineCommandType(getFirstWord(userCommand));
+  String[] parameters = splitParameters(removeFirstWord(userCommand));
+  if (parameters.length < PARAM_SIZE_FOR_GET_DISTANCE) {
    return String.format(MESSAGE_INVALID_FORMAT, userCommand);
-  case EXIT:
-   System.exit(0);
-  default:
-   //throw an error if the command is not recognized
-   throw new Error("Unrecognized command type");
+  }else{
+    String newStartLocation = parameters[PARAM_POSITION_START_LOCATION];
+    String newEndLocation = parameters[PARAM_POSITION_END_LOCATION];
+    switch (commandType) {
+    case ADD_ROUTE:
+     String distance = parameters[PARAM_POSITION_DISTANCE];
+     return addRoute(newStartLocation,newEndLocation,distance,userCommand);
+    case GET_DISTANCE:
+     return getDistance(newStartLocation,newEndLocation);
+    case INVALID:
+     return String.format(MESSAGE_INVALID_FORMAT, userCommand);
+    case EXIT:
+     System.exit(0);
+    default:
+     //throw an error if the command is not recognized
+     throw new Error("Unrecognized command type");
+    }
   }
   /*
    * ==============NOTE TO STUDENTS======================================
@@ -187,16 +186,7 @@ public class CityConnect {
   *            is the full string user has entered as the command
   * @return the distance
   */
- private static String getDistance(String userCommand) {
-
-  String[] parameters = splitParameters(removeFirstWord(userCommand));
-
-  if (parameters.length < PARAM_SIZE_FOR_GET_DISTANCE) {
-   return String.format(MESSAGE_INVALID_FORMAT, userCommand);
-  }
-
-  String newStartLocation = parameters[PARAM_POSITION_START_LOCATION];
-  String newEndLocation = parameters[PARAM_POSITION_END_LOCATION];
+ private static String getDistance(String newStartLocation,String newEndLocation) {
 
   int position = getPositionOfExistingRoute(newStartLocation, newEndLocation);
 
@@ -242,18 +232,8 @@ public class CityConnect {
   *            checking the first word to be 'addroute')
   * @return status of the operation
   */
- private static String addRoute(String userCommand) {
+ private static String addRoute(String newStartLocation,String newEndLocation, String distance, String userCommand) {
   
-  String[] parameters = splitParameters(removeFirstWord(userCommand));
-  
-  if (parameters.length < PARAM_SIZE_FOR_ADD_ROUTE){
-   return String.format(MESSAGE_INVALID_FORMAT, userCommand);
-  }
-
-  String newStartLocation = parameters[PARAM_POSITION_START_LOCATION];
-  String newEndLocation = parameters[PARAM_POSITION_END_LOCATION];
-  String distance = parameters[PARAM_POSITION_DISTANCE];
-
   if (!isPositiveNonZeroInt(distance)){
    return String.format(MESSAGE_INVALID_FORMAT, userCommand);
   }
